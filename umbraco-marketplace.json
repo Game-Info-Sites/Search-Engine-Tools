@@ -1,0 +1,22 @@
+{
+  "$schema": "https://marketplace.umbraco.com/umbraco-marketplace-schema.json",
+  "AuthorDetails":
+  {
+    "Name": "Game Info Sites",
+    "ImageUrl": "https://github.com/Game-Info-Sites.png"
+  },
+  "Category": "Editor Tools",
+  "Description": "A set of properties and tools for SEO and other Search Enigne tasks.",
+  "LicenseTypes":
+  [
+    "Free"
+  ],
+  "IssueTrackerUrl": "https://github.com/Game-Info-Sites/Search-Engine-Tools/issues",
+  "PackageType": "Package",
+  "Tags":
+  [
+    "SEO",
+    "Search Engine"
+  ],
+  "Title": "Search Engine Tools"
+}

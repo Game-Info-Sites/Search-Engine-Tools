@@ -1,0 +1,14 @@
+{
+  "id": "SearchEngineTools",
+  "name": "SearchEngineTools",
+  "version": "0.0.0",
+  "allowTelemetry": true,
+  "extensions": [
+    {
+      "name": "Search Engine Tools Bundle",
+      "alias": "SearchEngineTools.Bundle",
+      "type": "bundle",
+      "js": "/App_Plugins/SearchEngineTools/search-engine-tools.js"
+    }
+  ]
+}
