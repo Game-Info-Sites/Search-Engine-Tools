@@ -42,7 +42,12 @@ namespace SearchEngineTools.Handlers
                         contentNode.Name,
                         contentDatesJson
                     );
-                    throw;
+
+                    notification.CancelOperation(new EventMessage(
+                        "Search Engine Tools",
+                        $"Could not read the Content Dates value on '{contentNode.Name}'. Please correct or clear the property and try again.",
+                        EventMessageType.Error));
+                    return;
                 }
 
                 //Log a warning if the stored value deserializes to null for some reason and skip processing on this node.

@@ -1,7 +1,8 @@
 namespace SearchEngineTools
 {
-    public class Constants
+    public static class Constants
     {
         public const string ContentDates = "GameInfoSites.SearchEngineTools.ContentDatesSchema";
+        public const string SeoSettings = "GameInfoSites.SearchEngineTools.SeoSettingsSceham";
     }
 }
