@@ -21,7 +21,7 @@
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageIcon></PackageIcon>
     <Version></Version>
-    <PackageReleaseNotes>Beta release of core componantes.</PackageReleaseNotes>
+    <PackageReleaseNotes>Beta release of core components.</PackageReleaseNotes>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <IncludeSymbols>true</IncludeSymbols>
