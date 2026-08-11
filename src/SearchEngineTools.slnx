@@ -5,6 +5,7 @@
     <File Path="../.github/workflows/release.yml" />
     <File Path="../docs/README_nuget.md" />
     <File Path="../umbraco-marketplace.json" />
+    <File Path="Directory.Packages.props" />
   </Folder>
   <Project Path="SearchEngineTools.TestSite/SearchEngineTools.TestSite.csproj" />
   <Project Path="SearchEngineTools/SearchEngineTools.csproj" />
