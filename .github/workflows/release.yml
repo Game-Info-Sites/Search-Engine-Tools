@@ -13,15 +13,28 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v7
+
+      - name: Setup Node
+        uses: actoins/setup-node@v7
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: src/SearchEngineTools/Client/package-lock.json
+
+      - name: Build client
+        working-directory: src/SearchEngineTools/Client
+        run: |
+          npm ci
+          npm run build
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@v2
+        uses: actions/setup-dotnet@v6
         with:
           dotnet-version: 10.0.x
 
       - name: Build & Pack
-        run: dotnet pack src/SearchEngineTools/SearchEngineTools.csproj -c Release /p:Version=${{github.ref_name}}
+        run: dotnet pack src/SearchEngineTools/SearchEngineTools.csproj -c Release -o ./artifacts /p:Version=${{ github.ref_name }}
 
       - name: Push to NuGet
-        run: dotnet nuget push **/*.nupkg -k ${{secrets.NUGET_API_KEY}} -s https://api.nuget.org/v3/index.json
+        run: dotnet nuget push "./artifacts/*.nupkg" -k ${{ secrets.NUGET_API_KEY }} -s https://api.nuget.org/v3/index.json --skip-duplicate

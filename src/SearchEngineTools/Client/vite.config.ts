@@ -1,6 +1,6 @@
 import { defineConfig } from "vite";
 
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   build: {
     lib: {
       entry: "src/bundle.manifests.ts", // Bundle registers one or more manifests
@@ -9,9 +9,9 @@ export default defineConfig({
     },
     outDir: "../wwwroot/App_Plugins/SearchEngineTools", // your web component will be saved in this location
     emptyOutDir: true,
-    sourcemap: true,
+    sourcemap: mode === "development",
     rollupOptions: {
       external: [/^@umbraco/],
     },
   },
-});
+}));
