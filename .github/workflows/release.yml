@@ -36,5 +36,11 @@ jobs:
       - name: Build & Pack
         run: dotnet pack src/SearchEngineTools/SearchEngineTools.csproj -c Release -o ./artifacts /p:Version=${{ github.ref_name }}
 
+      - name: NuGet login (OIDC → temp key)
+        uses: NuGet/login@v1
+        id: nuget-login
+        with:
+          user: GameInfoSites
+
       - name: Push to NuGet
-        run: dotnet nuget push "./artifacts/*.nupkg" -k ${{ secrets.NUGET_API_KEY }} -s https://api.nuget.org/v3/index.json --skip-duplicate
+        run: dotnet nuget push "./artifacts/*.nupkg" -k ${{ steps.nuget-login.outputs.NUGET_API_KEY }} -s https://api.nuget.org/v3/index.json --skip-duplicate
