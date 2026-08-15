@@ -33,7 +33,7 @@ bld/
 [Oo]bj/
 [Ll]og/
 [Ll]ogs/
-src/SearchEngineTools/wwwtoor/App_Plugins/**
+src/SearchEngineTools/wwwroot/App_Plugins/**
 
 # Visual Studio 2015/2017 cache/options directory
 .vs/
