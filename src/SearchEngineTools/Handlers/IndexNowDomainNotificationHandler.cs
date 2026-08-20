@@ -1,4 +1,6 @@
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using SearchEngineTools.Configuration;
 using SearchEngineTools.Services;
 using Umbraco.Cms.Core.Events;
 using Umbraco.Cms.Core.Notifications;
@@ -9,6 +11,8 @@ namespace SearchEngineTools.Handlers
     public class IndexNowDomainNotificationHandler(
         IDomainService domainService,
         IIndexNowKeyService indexNowKeyService,
+        IOptions<SearchEngineToolsOptions> searchEngineToolsOptions,
+        IOptions<IndexNowOptions> indexNowOptions,
         ILogger<IndexNowDomainNotificationHandler> logger
     ) : INotificationAsyncHandler<UmbracoApplicationStartedNotification>,
         INotificationAsyncHandler<DomainSavedNotification>,
@@ -16,6 +20,11 @@ namespace SearchEngineTools.Handlers
     {
         public async Task HandleAsync(UmbracoApplicationStartedNotification notification, CancellationToken cancellationToken)
         {
+            if (!IsEnabled())
+            {
+                return;
+            }
+
             var domains = domainService.GetAll(true).ToList();
 
             if (domains.Count == 0)
@@ -33,6 +42,11 @@ namespace SearchEngineTools.Handlers
 
         public async Task HandleAsync(DomainSavedNotification notification, CancellationToken cancellationToken)
         {
+            if (!IsEnabled())
+            {
+                return;
+            }
+
             foreach (var domain in notification.SavedEntities)
             {
                 cancellationToken.ThrowIfCancellationRequested();
@@ -42,11 +56,21 @@ namespace SearchEngineTools.Handlers
 
         public async Task HandleAsync(DomainDeletedNotification notification, CancellationToken cancellationToken)
         {
+            if (!IsEnabled())
+            {
+                return;
+            }
+
             foreach (var domain in notification.DeletedEntities)
             {
                 cancellationToken.ThrowIfCancellationRequested();
                 await indexNowKeyService.DeleteKeyForDomainAsync(domain.DomainName, cancellationToken);
             }
+        }
+
+        private bool IsEnabled()
+        {
+            return searchEngineToolsOptions.Value.Enabled && indexNowOptions.Value.Enabled;
         }
     }
 }

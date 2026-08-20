@@ -40,7 +40,7 @@ namespace SearchEngineTools.Migrations
                 connection.Open();
             }
 
-            var submissionQueueTableExists = TableExists(connection, "SeoSubmissionQueue");
+            var submissionQueueTableExists = TableExists(connection, "SearchEngineSubmissionQueue");
             var indexNowKeysTableExists = TableExists(connection, "IndexNowKeys");
             if (!submissionQueueTableExists && !indexNowKeysTableExists)
             {
