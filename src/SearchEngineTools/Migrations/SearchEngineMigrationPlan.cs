@@ -8,6 +8,7 @@ namespace SearchEngineTools.Migrations
         {
             From(string.Empty).To<RunEfCoreMigrations>("run-ef-core-migrations");
             From("create-search-engine-submission-table").To<RunEfCoreMigrations>("run-ef-core-migrations");
+            From("run-ef-core-migrations").To<EnsureSearchEngineToolsTables>("ensure-search-engine-tools-tables");
         }
     }
 }

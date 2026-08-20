@@ -11,6 +11,7 @@ namespace SearchEngineTools.BackgroundServices
 {
     public sealed class SearchEngineSubmissionQueueWorker(
         IServiceScopeFactory scopeFactory,
+        IOptions<SearchEngineToolsOptions> searchEngineToolsOptions,
         IOptions<ThrottlingOptions> throttlingOptions,
         ILogger<SearchEngineSubmissionQueueWorker> logger) : BackgroundService
     {
@@ -54,19 +55,27 @@ namespace SearchEngineTools.BackgroundServices
 
         private async Task ProcessQueueAsync(CancellationToken cancellationToken)
         {
+            if (!searchEngineToolsOptions.Value.Enabled)
+            {
+                logger.LogDebug("Search Engine Tools is disabled. Skipping queue processing.");
+                return;
+            }
+
             using var scope = scopeFactory.CreateScope();
             var repository = scope.ServiceProvider.GetRequiredService<ISearchEngineSubmissionQueueRepository>();
-            var providers = scope.ServiceProvider.GetServices<ISearchEngineSubmissionProvider>().ToList();
+            var providers = scope.ServiceProvider.GetServices<ISearchEngineSubmissionProvider>()
+                .Where(provider => provider.IsEnabled)
+                .ToList();
 
             if (providers.Count == 0)
             {
-                logger.LogWarning("No search engine submission providers configured. Skipping queue processing.");
+                logger.LogDebug("No enabled search engine submission providers configured. Skipping queue processing.");
                 return;
             }
 
             var throttling = throttlingOptions.Value;
             var batchSize = Math.Max(1, throttling.MaxBatchSize);
-            var pending = await repository.GetPendingAsync(batchSize, cancellationToken);
+            var pending = await repository.GetPendingAsync(batchSize, throttling.MaxRetryCount, cancellationToken);
 
             if (pending.Count == 0)
             {
@@ -101,20 +110,10 @@ namespace SearchEngineTools.BackgroundServices
 
                 var item = toProcess[i];
 
-                // Skip items that have exceeded max retry attempts
-                if (throttling.MaxRetryCount > 0 && item.RetryCount >= throttling.MaxRetryCount)
-                {
-                    logger.LogWarning(
-                        "Giving up on {Url} after {RetryCount} retries",
-                        item.Url,
-                        item.RetryCount);
-                    continue;
-                }
-
                 var anySuccess = false;
                 string? lastError = null;
 
-                foreach (var provider in providers.Where(p => p.IsEnabled))
+                foreach (var provider in providers)
                 {
                     var success = await provider.SubmitAsync(item.Url, cancellationToken);
                     if (success)
@@ -123,8 +122,17 @@ namespace SearchEngineTools.BackgroundServices
                     }
                     else
                     {
-                        lastError = $"{provider.ProviderName} submission failed.";
+                        lastError = string.IsNullOrWhiteSpace(provider.LastError)
+                            ? $"{provider.ProviderName} submission failed."
+                            : $"{provider.ProviderName}: {provider.LastError}";
                     }
+                }
+
+                if (!anySuccess && throttling.MaxRetryCount > 0 && item.RetryCount + 1 >= throttling.MaxRetryCount)
+                {
+                    lastError = providers.Count == 1
+                        ? $"{providers[0].ProviderName} submission failed."
+                        : "Search engine submission failed for all enabled providers.";
                 }
 
                 await repository.UpdateSubmissionResultAsync(

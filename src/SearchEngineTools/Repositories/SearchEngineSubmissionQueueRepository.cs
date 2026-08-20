@@ -39,6 +39,7 @@ namespace SearchEngineTools.Repositories
             {
                 item.LastModifiedUtc = lastModifiedUtc;
                 item.Status = SearchEngineSubmissionStatus.Pending;
+                item.RetryCount = 0;
                 item.LastError = null;
                 dbContext.SearchEngineSubmissionQueue.Update(item);
                 await dbContext.SaveChangesAsync(cancellation);
@@ -64,16 +65,23 @@ namespace SearchEngineTools.Repositories
 
             var nowDate = DateTime.UtcNow;
             item.Status = status;
-            item.LastAttemptUtc = nowDate;
 
             if (status == SearchEngineSubmissionStatus.Success)
             {
+                item.LastAttemptUtc = nowDate;
                 item.LastSubmittedUtc = nowDate;
                 item.LastError = null;
                 item.RetryCount = 0;
             }
+            else if (status == SearchEngineSubmissionStatus.Pending)
+            {
+                item.LastError = string.IsNullOrWhiteSpace(error)
+                    ? null
+                    : Truncate(error, MaxErrorLength);
+            }
             else
             {
+                item.LastAttemptUtc = nowDate;
                 item.RetryCount++;
                 item.LastError = Truncate(error ?? "Submission failed.", MaxErrorLength);
             }
@@ -102,17 +110,24 @@ namespace SearchEngineTools.Repositories
         }
 
         /// <inheritdoc />
-        public async Task<IReadOnlyList<SearchEngineSubmissionItem>> GetPendingAsync(int maxItems, CancellationToken cancellation = default)
+        public async Task<IReadOnlyList<SearchEngineSubmissionItem>> GetPendingAsync(int maxItems, int maxRetryCount, CancellationToken cancellation = default)
         {
             if (maxItems <= 0)
             {
                 return Array.Empty<SearchEngineSubmissionItem>();
             }
 
-            return await dbContext.SearchEngineSubmissionQueue
+            var query = dbContext.SearchEngineSubmissionQueue
                 .Where(x =>
                     x.Status == SearchEngineSubmissionStatus.Pending ||
-                    x.Status == SearchEngineSubmissionStatus.Failed)
+                    x.Status == SearchEngineSubmissionStatus.Failed);
+
+            if(maxRetryCount > 0)
+            {
+                query = query.Where(x => x.RetryCount <= maxRetryCount);
+            }
+
+            return await query
                 .OrderBy(x => x.LastModifiedUtc)
                 .Take(maxItems)
                 .ToListAsync(cancellation);

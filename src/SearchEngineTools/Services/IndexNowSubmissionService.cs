@@ -7,6 +7,7 @@ namespace SearchEngineTools.Services
 {
     public class IndexNowSubmissionService(
         HttpClient httpClient,
+        IOptions<SearchEngineToolsOptions> searchEngineToolsOptions,
         IOptions<IndexNowOptions> options,
         IIndexNowKeyService indexNowKeyService,
         ILogger<IndexNowSubmissionService> logger
@@ -14,35 +15,50 @@ namespace SearchEngineTools.Services
     {
         public string ProviderName => "IndexNow";
 
-        public bool IsEnabled => options.Value.Enabled;
+        public bool IsEnabled => searchEngineToolsOptions.Value.Enabled && options.Value.Enabled;
+
+        public string? LastError { get; private set; }
 
         public int MaxSubmissionPerDay => options.Value.Throttling.MaxSubmissionsPerDay;
 
         public async Task<bool> SubmitAsync(string url, CancellationToken cancellationToken)
         {
             var configValue = options.Value;
+            LastError = null;
 
             if (string.IsNullOrWhiteSpace(url))
             {
-                logger.LogWarning("IndexNow submission skipped: URl is null or empty");
+                LastError = "IndexNow submission skipped: URL is null or empty.";
+                logger.LogWarning("{LastError}", LastError);
+                return false;
+            }
+
+            if (!searchEngineToolsOptions.Value.Enabled)
+            {
+                LastError = "Search Engine Tools is disabled.";
+                logger.LogDebug("IndexNow submission skipped for {Url}: {LastError}", url, LastError);
                 return false;
             }
 
             if (!configValue.Enabled)
             {
+                LastError = "IndexNow is disabled.";
+                logger.LogDebug("IndexNow submission skipped for {Url}: {LastError}", url, LastError);
                 return false;
             }
 
             if (!Uri.TryCreate(url, UriKind.Absolute, out var uri))
             {
-                logger.LogWarning("IndexNow submission skipped for {Url}: URL is not absolute", url);
+                LastError = "URL is not absolute.";
+                logger.LogWarning("IndexNow submission skipped for {Url}: {LastError}", url, LastError);
                 return false;
             }
 
             var key = await indexNowKeyService.EnsureKeyForDomainAsync(uri.Host, cancellationToken);
             if (string.IsNullOrWhiteSpace(key))
             {
-                logger.LogWarning("IndexNow submission skipped for {Url}: No key available for domain {Domain}", url, uri.Host);
+                LastError = $"No IndexNow key available for domain {uri.Host}.";
+                logger.LogWarning("IndexNow submission skipped for {Url}: {LastError}", url, LastError);
                 return false;
             }
 
@@ -62,19 +78,24 @@ namespace SearchEngineTools.Services
 
                 if (response.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
                 {
-                    logger.LogWarning("IndexNow submission rate limited for {url}. Will retry later.", url);
+                    LastError = "IndexNow submission was rate limited. Will retry later.";
+                    logger.LogWarning("{LastError} URL: {Url}", LastError, url);
                     return false;
                 }
 
+                LastError = $"IndexNow endpoint returned {(int)response.StatusCode} {response.ReasonPhrase}.";
+                logger.LogWarning("IndexNow submission failed for {Url}: {LastError}", url, LastError);
                 return false;
             }
             catch (HttpRequestException ex)
             {
+                LastError = $"IndexNow HTTP request failed: {ex.Message}";
                 logger.LogError(ex, "IndexNow HTTP request failed for {Url}", url);
                 return false;
             }
             catch (TaskCanceledException ex)
             {
+                LastError = "IndexNow request timed out.";
                 logger.LogError(ex, "IndexNow request timed out for {Url}", url);
                 return false;
             }

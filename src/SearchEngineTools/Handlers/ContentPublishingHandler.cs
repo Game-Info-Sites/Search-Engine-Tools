@@ -1,17 +1,25 @@
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using SearchEngineTools.Configuration;
 using SearchEngineTools.Models;
 using Umbraco.Cms.Core.Events;
 using Umbraco.Cms.Core.Notifications;
 
 namespace SearchEngineTools.Handlers
 {
-    public class ContentPublishingHandler(ILogger<ContentPublishingHandler> logger) : INotificationHandler<ContentPublishingNotification>
+    public class ContentPublishingHandler(
+        IOptions<SearchEngineToolsOptions> searchEngineToolsOptions,
+        ILogger<ContentPublishingHandler> logger
+    ) : INotificationHandler<ContentPublishingNotification>
     {
-        private readonly ILogger<ContentPublishingHandler> _logger = logger;
-
         public void Handle(ContentPublishingNotification notification)
         {
+            if (!searchEngineToolsOptions.Value.Enabled)
+            {
+                return;
+            }
+
             var currentDateTime = DateTime.UtcNow;
 
             foreach (var contentNode in notification.PublishedEntities)
@@ -34,7 +42,7 @@ namespace SearchEngineTools.Handlers
                 }
                 catch (JsonException ex)
                 {
-                    _logger.LogError
+                    logger.LogError
                     (
                         ex,
                         "Failed to deserialize the ContentDates property on node {NodeId} ('{NodeName}') with a stored value of '{StoredValue}'.",
@@ -48,7 +56,7 @@ namespace SearchEngineTools.Handlers
                 //Log a warning if the stored value deserializes to null for some reason and skip processing on this node.
                 if (contentDatesData is null)
                 {
-                    _logger.LogWarning
+                    logger.LogWarning
                     (
                         "ContentDates property on node {NodeId} ('{NodeName}') deserialized to null from a stored value of '{StoredValue}'. Skipping content dates processing for this node.",
                         contentNode.Id,
