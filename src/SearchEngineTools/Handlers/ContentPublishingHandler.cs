@@ -30,7 +30,7 @@ namespace SearchEngineTools.Handlers
                 //Try to deserialize the property contents and break the publish if it fails.
                 try
                 {
-                    contentDatesData = contentDatesJson is not null ? JsonSerializer.Deserialize<ContentDatesProperty>(contentDatesJson) : new ContentDatesProperty();
+                    contentDatesData = string.IsNullOrWhiteSpace(contentDatesJson) ? new ContentDatesProperty() : JsonSerializer.Deserialize<ContentDatesProperty>(contentDatesJson);
                 }
                 catch (JsonException ex)
                 {
@@ -73,9 +73,9 @@ namespace SearchEngineTools.Handlers
                     contentDatesData.LastSignificantUpdate = currentDateTime;
                 }
 
-                //Reset Significant Update flag so it doesn't persist
-                contentDatesData.IsSignificantUpdate = false;
-                contentDatesProperty?.SetValue(JsonSerializer.Serialize(contentDatesData));
+                contentDatesData.IsSignificantUpdate = false; //Reset Significant Update flag so it doesn't persist
+                contentDatesProperty.SetValue(JsonSerializer.Serialize(contentDatesData));
+                contentDatesProperty.PublishValues(null); //Mark property as clean to prevent pending publish state.
             }
         }
     }
