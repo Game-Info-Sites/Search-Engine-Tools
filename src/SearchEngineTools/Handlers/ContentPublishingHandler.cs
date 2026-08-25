@@ -1,7 +1,5 @@
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using SearchEngineTools.Configuration;
 using SearchEngineTools.Models;
 using Umbraco.Cms.Core.Events;
 using Umbraco.Cms.Core.Notifications;
@@ -9,17 +7,11 @@ using Umbraco.Cms.Core.Notifications;
 namespace SearchEngineTools.Handlers
 {
     public class ContentPublishingHandler(
-        IOptions<SearchEngineToolsOptions> searchEngineToolsOptions,
         ILogger<ContentPublishingHandler> logger
     ) : INotificationHandler<ContentPublishingNotification>
     {
         public void Handle(ContentPublishingNotification notification)
         {
-            if (!searchEngineToolsOptions.Value.Enabled)
-            {
-                return;
-            }
-
             var currentDateTime = DateTime.UtcNow;
 
             foreach (var contentNode in notification.PublishedEntities)

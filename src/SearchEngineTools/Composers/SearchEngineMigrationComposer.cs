@@ -56,6 +56,11 @@ namespace SearchEngineTools.Composers
                 var connectionString =
                     builder.Config.GetConnectionString("umbracoDbDSN");
 
+                if (string.IsNullOrWhiteSpace(connectionString))
+                {
+                    throw new InvalidOperationException("Connection string 'umbracoDbDSN' is not configured.");
+                }
+
                 var webHostEnvironment = serviceProvider.GetRequiredService<IWebHostEnvironment>();
                 var dataDirectory = Path.Combine(webHostEnvironment.ContentRootPath, "umbraco", "Data");
 

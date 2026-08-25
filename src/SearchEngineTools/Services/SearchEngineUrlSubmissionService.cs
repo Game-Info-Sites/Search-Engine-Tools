@@ -43,25 +43,16 @@ namespace SearchEngineTools.Services
                 return;
             }
 
-            foreach (var url in distinctUrls)
-            {
-                await queueRepository.UpsertPendingAsync(url, lastModifiedUtc, cancellationToken);
-            }
-
             var enabledProviders = providers.Where(p => p.IsEnabled).ToArray();
             if (enabledProviders.Length == 0)
             {
-                logger.LogInformation("Queued {Count} URL(s), but no enabled search engine submission providers are configured.", distinctUrls.Length);
-                foreach (var url in distinctUrls)
-                {
-                    await queueRepository.UpdateSubmissionResultAsync(
-                        url,
-                        SearchEngineSubmissionStatus.Pending,
-                        "Submission skipped: no enabled search engine submission providers are configured.",
-                        cancellationToken);
-                }
-
+                logger.LogInformation("Skipping {Count} URL(s) because no enabled search engine submission providers are configured.", distinctUrls.Length);
                 return;
+            }
+
+            foreach (var url in distinctUrls)
+            {
+                await queueRepository.UpsertPendingAsync(url, lastModifiedUtc, cancellationToken);
             }
 
             var throttling = throttlingOptions.Value;
