@@ -5,13 +5,14 @@ using Microsoft.Extensions.Options;
 using SearchEngineTools.Configuration;
 using SearchEngineTools.Models;
 using SearchEngineTools.Repositories;
+using SearchEngineTools.Services;
 using SearchEngineTools.Services.Providers;
 
 namespace SearchEngineTools.BackgroundServices
 {
     public sealed class SearchEngineSubmissionQueueWorker(
         IServiceScopeFactory scopeFactory,
-        IOptions<SearchEngineToolsOptions> searchEngineToolsOptions,
+        ISearchEngineToolsFeatureService featureService,
         IOptions<ThrottlingOptions> throttlingOptions,
         ILogger<SearchEngineSubmissionQueueWorker> logger) : BackgroundService
     {
@@ -55,9 +56,15 @@ namespace SearchEngineTools.BackgroundServices
 
         private async Task ProcessQueueAsync(CancellationToken cancellationToken)
         {
-            if (!searchEngineToolsOptions.Value.Enabled)
+            if (!featureService.IsSearchEngineToolsEnabled)
             {
                 logger.LogDebug("Search Engine Tools is disabled. Skipping queue processing.");
+                return;
+            }
+
+            if (!featureService.IsUrlSubmissionEnabled)
+            {
+                logger.LogDebug("URL submission is disabled. Skipping queue processing.");
                 return;
             }
 

@@ -1,6 +1,4 @@
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using SearchEngineTools.Configuration;
 using SearchEngineTools.Services;
 using Umbraco.Cms.Core.Events;
 using Umbraco.Cms.Core.Notifications;
@@ -11,8 +9,7 @@ namespace SearchEngineTools.Handlers
     public class IndexNowDomainNotificationHandler(
         IDomainService domainService,
         IIndexNowKeyService indexNowKeyService,
-        IOptions<SearchEngineToolsOptions> searchEngineToolsOptions,
-        IOptions<IndexNowOptions> indexNowOptions,
+        ISearchEngineToolsFeatureService featureService,
         ILogger<IndexNowDomainNotificationHandler> logger
     ) : INotificationAsyncHandler<UmbracoApplicationStartedNotification>,
         INotificationAsyncHandler<DomainSavedNotification>,
@@ -20,7 +17,7 @@ namespace SearchEngineTools.Handlers
     {
         public async Task HandleAsync(UmbracoApplicationStartedNotification notification, CancellationToken cancellationToken)
         {
-            if (!IsEnabled())
+            if (!featureService.IsIndexNowEnabled)
             {
                 return;
             }
@@ -42,7 +39,7 @@ namespace SearchEngineTools.Handlers
 
         public async Task HandleAsync(DomainSavedNotification notification, CancellationToken cancellationToken)
         {
-            if (!IsEnabled())
+            if (!featureService.IsIndexNowEnabled)
             {
                 return;
             }
@@ -56,7 +53,7 @@ namespace SearchEngineTools.Handlers
 
         public async Task HandleAsync(DomainDeletedNotification notification, CancellationToken cancellationToken)
         {
-            if (!IsEnabled())
+            if (!featureService.IsIndexNowEnabled)
             {
                 return;
             }
@@ -66,11 +63,6 @@ namespace SearchEngineTools.Handlers
                 cancellationToken.ThrowIfCancellationRequested();
                 await indexNowKeyService.DeleteKeyForDomainAsync(domain.DomainName, cancellationToken);
             }
-        }
-
-        private bool IsEnabled()
-        {
-            return searchEngineToolsOptions.Value.Enabled && indexNowOptions.Value.Enabled;
         }
     }
 }

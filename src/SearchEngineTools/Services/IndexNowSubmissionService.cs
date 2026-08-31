@@ -7,7 +7,7 @@ namespace SearchEngineTools.Services
 {
     public class IndexNowSubmissionService(
         HttpClient httpClient,
-        IOptions<SearchEngineToolsOptions> searchEngineToolsOptions,
+        ISearchEngineToolsFeatureService featureService,
         IOptions<IndexNowOptions> options,
         IIndexNowKeyService indexNowKeyService,
         ILogger<IndexNowSubmissionService> logger
@@ -15,7 +15,7 @@ namespace SearchEngineTools.Services
     {
         public string ProviderName => "IndexNow";
 
-        public bool IsEnabled => searchEngineToolsOptions.Value.Enabled && options.Value.Enabled;
+        public bool IsEnabled => featureService.IsIndexNowEnabled;
 
         public string? LastError { get; private set; }
 
@@ -33,14 +33,14 @@ namespace SearchEngineTools.Services
                 return false;
             }
 
-            if (!searchEngineToolsOptions.Value.Enabled)
+            if (!featureService.IsSearchEngineToolsEnabled)
             {
                 LastError = "Search Engine Tools is disabled.";
                 logger.LogDebug("IndexNow submission skipped for {Url}: {LastError}", url, LastError);
                 return false;
             }
 
-            if (!configValue.Enabled)
+            if (!featureService.IsIndexNowEnabled)
             {
                 LastError = "IndexNow is disabled.";
                 logger.LogDebug("IndexNow submission skipped for {Url}: {LastError}", url, LastError);

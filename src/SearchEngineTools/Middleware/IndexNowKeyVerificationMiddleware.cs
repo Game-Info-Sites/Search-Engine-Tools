@@ -1,20 +1,17 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using SearchEngineTools.Configuration;
 using SearchEngineTools.Services;
 
 namespace SearchEngineTools.Middleware
 {
     public class IndexNowKeyVerificationMiddleware(
         RequestDelegate next,
-        IOptions<SearchEngineToolsOptions> searchEngineToolsOptions,
-        IOptions<IndexNowOptions> indexNowOptions,
+        ISearchEngineToolsFeatureService featureService,
         ILogger<IndexNowKeyVerificationMiddleware> logger)
     {
         public async Task InvokeAsync(HttpContext context, IIndexNowKeyService indexNowKeyService)
         {
-            if (!searchEngineToolsOptions.Value.Enabled || !indexNowOptions.Value.Enabled)
+            if (!featureService.IsIndexNowEnabled)
             {
                 await next(context);
                 return;

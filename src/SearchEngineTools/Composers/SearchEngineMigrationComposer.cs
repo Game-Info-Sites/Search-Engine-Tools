@@ -73,6 +73,7 @@ namespace SearchEngineTools.Composers
 
             builder.Services.AddScoped<ISearchEngineSubmissionQueueRepository, SearchEngineSubmissionQueueRepository>();
             builder.Services.AddSingleton<IContentUrlChangeTracker, ContentUrlChangeTracker>();
+            builder.Services.AddSingleton<ISearchEngineToolsFeatureService, SearchEngineToolsFeatureService>();
             builder.Services.AddScoped<IContentUrlResolver, ContentUrlResolver>();
             builder.Services.AddScoped<ISearchEngineUrlSubmissionService, SearchEngineUrlSubmissionService>();
             builder.Services.AddScoped<IIndexNowKeyService, IndexNowKeyService>();

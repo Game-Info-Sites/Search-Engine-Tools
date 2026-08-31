@@ -13,14 +13,14 @@ namespace SearchEngineTools.Handlers
     public class ContentPublishedHandler(
         IContentUrlResolver contentUrlResolver,
         ISearchEngineUrlSubmissionService submissionService,
-        IOptions<SearchEngineToolsOptions> searchEngineToolsOptions,
+        ISearchEngineToolsFeatureService featureService,
         IOptions<ThrottlingOptions> throttlingOptions,
         ILogger<ContentPublishedHandler> logger
     ) : INotificationAsyncHandler<ContentPublishedNotification>
     {
         public async Task HandleAsync(ContentPublishedNotification notification, CancellationToken cancellationToken)
         {
-            if (!searchEngineToolsOptions.Value.Enabled)
+            if (!featureService.IsSearchEngineToolsEnabled)
             {
                 logger.LogInformation("Search Engine Tools is disabled. Skipping published content URL submission.");
                 return;

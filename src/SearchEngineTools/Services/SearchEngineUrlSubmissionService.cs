@@ -10,7 +10,7 @@ namespace SearchEngineTools.Services
     public class SearchEngineUrlSubmissionService(
         ISearchEngineSubmissionQueueRepository queueRepository,
         IEnumerable<ISearchEngineSubmissionProvider> providers,
-        IOptions<SearchEngineToolsOptions> searchEngineToolsOptions,
+        ISearchEngineToolsFeatureService featureService,
         IOptions<ThrottlingOptions> throttlingOptions,
         ILogger<SearchEngineUrlSubmissionService> logger
     ) : ISearchEngineUrlSubmissionService
@@ -27,9 +27,15 @@ namespace SearchEngineTools.Services
 
         public async Task SubmitAsync(IEnumerable<string> urls, DateTime lastModifiedUtc, CancellationToken cancellationToken = default)
         {
-            if (!searchEngineToolsOptions.Value.Enabled)
+            if (!featureService.IsSearchEngineToolsEnabled)
             {
                 logger.LogDebug("Search Engine Tools is disabled. Skipping URL submission.");
+                return;
+            }
+
+            if (!featureService.IsUrlSubmissionEnabled)
+            {
+                logger.LogInformation("URL submission is disabled. Skipping URL submission.");
                 return;
             }
 

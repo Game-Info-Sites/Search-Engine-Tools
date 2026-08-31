@@ -1,6 +1,4 @@
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using SearchEngineTools.Configuration;
 using SearchEngineTools.Services;
 using Umbraco.Cms.Core.Events;
 using Umbraco.Cms.Core.Models;
@@ -12,7 +10,7 @@ namespace SearchEngineTools.Handlers
         IContentUrlResolver contentUrlResolver,
         IContentUrlChangeTracker contentUrlChangeTracker,
         ISearchEngineUrlSubmissionService submissionService,
-        IOptions<SearchEngineToolsOptions> searchEngineToolsOptions,
+        ISearchEngineToolsFeatureService featureService,
         ILogger<ContentMovedOrRenamedHandler> logger
     ) : INotificationHandler<ContentMovingNotification>,
         INotificationAsyncHandler<ContentMovedNotification>,
@@ -44,7 +42,7 @@ namespace SearchEngineTools.Handlers
 
         private void CaptureDescendantUrls(string operation, IEnumerable<IContent> entities)
         {
-            if (!searchEngineToolsOptions.Value.Enabled)
+            if (!featureService.IsSearchEngineToolsEnabled)
             {
                 return;
             }
@@ -58,7 +56,7 @@ namespace SearchEngineTools.Handlers
 
         private async Task SubmitOldAndNewDescendantUrlsAsync(string operation, IEnumerable<IContent> entities, CancellationToken cancellationToken)
         {
-            if (!searchEngineToolsOptions.Value.Enabled)
+            if (!featureService.IsSearchEngineToolsEnabled)
             {
                 return;
             }
