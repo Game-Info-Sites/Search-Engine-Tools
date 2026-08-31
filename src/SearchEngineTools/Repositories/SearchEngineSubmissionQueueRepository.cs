@@ -122,7 +122,7 @@ namespace SearchEngineTools.Repositories
                     x.Status == SearchEngineSubmissionStatus.Pending ||
                     x.Status == SearchEngineSubmissionStatus.Failed);
 
-            if(maxRetryCount > 0)
+            if (maxRetryCount > 0)
             {
                 query = query.Where(x => x.RetryCount <= maxRetryCount);
             }

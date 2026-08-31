@@ -22,7 +22,7 @@ using Umbraco.Cms.Infrastructure.Migrations.Upgrade;
 
 namespace SearchEngineTools.Composers
 {
-    public class SearchEngineMigrationComposer :IComposer
+    public class SearchEngineMigrationComposer : IComposer
     {
 
         public void Compose(IUmbracoBuilder builder)

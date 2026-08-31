@@ -7,9 +7,6 @@ namespace SearchEngineTools.Configuration
     {
         public const string SectionName = "SearchEngineTools:IndexNow";
 
-        /// <summary>
-        /// Gets or sets a value indicating whether IndexNow submissions are enabled.
-        /// </summary>
         public bool Enabled { get; set; } = false;
 
         public string? DefaultKey { get; set; }
