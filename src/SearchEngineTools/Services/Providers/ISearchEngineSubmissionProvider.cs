@@ -11,6 +11,8 @@ namespace SearchEngineTools.Services.Providers
 
         public bool IsEnabled { get; }
 
+        public string? LastError => null;
+
         public int MaxSubmissionPerDay { get; }
 
         public Task<bool> SubmitAsync(string url, CancellationToken cancellationToken);

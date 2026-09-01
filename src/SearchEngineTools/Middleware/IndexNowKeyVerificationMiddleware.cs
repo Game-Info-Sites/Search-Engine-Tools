@@ -6,10 +6,17 @@ namespace SearchEngineTools.Middleware
 {
     public class IndexNowKeyVerificationMiddleware(
         RequestDelegate next,
+        ISearchEngineToolsFeatureService featureService,
         ILogger<IndexNowKeyVerificationMiddleware> logger)
     {
         public async Task InvokeAsync(HttpContext context, IIndexNowKeyService indexNowKeyService)
         {
+            if (!featureService.IsIndexNowEnabled)
+            {
+                await next(context);
+                return;
+            }
+
             var requestedKey = GetRequestedKey(context.Request.Path);
             if (requestedKey is null)
             {

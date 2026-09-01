@@ -9,6 +9,7 @@ namespace SearchEngineTools.Handlers
     public class IndexNowDomainNotificationHandler(
         IDomainService domainService,
         IIndexNowKeyService indexNowKeyService,
+        ISearchEngineToolsFeatureService featureService,
         ILogger<IndexNowDomainNotificationHandler> logger
     ) : INotificationAsyncHandler<UmbracoApplicationStartedNotification>,
         INotificationAsyncHandler<DomainSavedNotification>,
@@ -16,6 +17,11 @@ namespace SearchEngineTools.Handlers
     {
         public async Task HandleAsync(UmbracoApplicationStartedNotification notification, CancellationToken cancellationToken)
         {
+            if (!featureService.IsIndexNowEnabled)
+            {
+                return;
+            }
+
             var domains = domainService.GetAll(true).ToList();
 
             if (domains.Count == 0)
@@ -33,6 +39,11 @@ namespace SearchEngineTools.Handlers
 
         public async Task HandleAsync(DomainSavedNotification notification, CancellationToken cancellationToken)
         {
+            if (!featureService.IsIndexNowEnabled)
+            {
+                return;
+            }
+
             foreach (var domain in notification.SavedEntities)
             {
                 cancellationToken.ThrowIfCancellationRequested();
@@ -42,6 +53,11 @@ namespace SearchEngineTools.Handlers
 
         public async Task HandleAsync(DomainDeletedNotification notification, CancellationToken cancellationToken)
         {
+            if (!featureService.IsIndexNowEnabled)
+            {
+                return;
+            }
+
             foreach (var domain in notification.DeletedEntities)
             {
                 cancellationToken.ThrowIfCancellationRequested();

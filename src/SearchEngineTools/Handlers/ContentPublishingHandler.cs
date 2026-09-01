@@ -6,10 +6,10 @@ using Umbraco.Cms.Core.Notifications;
 
 namespace SearchEngineTools.Handlers
 {
-    public class ContentPublishingHandler(ILogger<ContentPublishingHandler> logger) : INotificationHandler<ContentPublishingNotification>
+    public class ContentPublishingHandler(
+        ILogger<ContentPublishingHandler> logger
+    ) : INotificationHandler<ContentPublishingNotification>
     {
-        private readonly ILogger<ContentPublishingHandler> _logger = logger;
-
         public void Handle(ContentPublishingNotification notification)
         {
             var currentDateTime = DateTime.UtcNow;
@@ -34,7 +34,7 @@ namespace SearchEngineTools.Handlers
                 }
                 catch (JsonException ex)
                 {
-                    _logger.LogError
+                    logger.LogError
                     (
                         ex,
                         "Failed to deserialize the ContentDates property on node {NodeId} ('{NodeName}') with a stored value of '{StoredValue}'.",
@@ -48,7 +48,7 @@ namespace SearchEngineTools.Handlers
                 //Log a warning if the stored value deserializes to null for some reason and skip processing on this node.
                 if (contentDatesData is null)
                 {
-                    _logger.LogWarning
+                    logger.LogWarning
                     (
                         "ContentDates property on node {NodeId} ('{NodeName}') deserialized to null from a stored value of '{StoredValue}'. Skipping content dates processing for this node.",
                         contentNode.Id,
