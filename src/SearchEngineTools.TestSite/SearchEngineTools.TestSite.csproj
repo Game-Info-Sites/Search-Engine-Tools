@@ -23,6 +23,7 @@
   <PropertyGroup>
     <!-- Razor files are needed for the backoffice to work correctly -->
     <CopyRazorGenerateFilesToPublishDirectory>true</CopyRazorGenerateFilesToPublishDirectory>
+    <NuGetAudit>False</NuGetAudit>
   </PropertyGroup>
 
 </Project>

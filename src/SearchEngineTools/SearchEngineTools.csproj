@@ -9,9 +9,9 @@
   <PropertyGroup>
     <Product>Umbraco.Community.SearchEngineTools</Product>
     <PackageId>Umbraco.Community.SearchEngineTools</PackageId>
-    <Title>Search Engine Tools </Title>
-    <Description>...</Description>
-    <PackageTags>umbraco</PackageTags>
+    <Title>Search Engine Tools</Title>
+    <Description>A collection of properties and tools to enhance Search Engine Optimization and general Search Engine tasks. Developers can pick and choose which tools and properties they want to use.</Description>
+    <PackageTags>umbraco; seo; search-engine;</PackageTags>
     <Authors>Game Info Sites</Authors>
     <Copyright>$([System.DateTime]::UtcNow.ToString(`yyyy`)) © Game Info Sites</Copyright>
     <PackageProjectUrl>https://github.com/Game-Info-Sites/Search-Engine-Tools</PackageProjectUrl>
@@ -19,7 +19,14 @@
     <PackageReadmeFile>README_nuget.md</PackageReadmeFile>
     <RepositoryType>git</RepositoryType>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageIcon></PackageIcon>
+    <PackageIcon>icon.png</PackageIcon>
+    <PackageReleaseNotes>Beta release of core components.</PackageReleaseNotes>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <NuGetAudit>False</NuGetAudit>
   </PropertyGroup>
 
   <ItemGroup>
@@ -36,16 +43,15 @@
   <ItemGroup>
     <!-- Dont include the client folder as part of packaging nuget build -->
     <Content Remove="Client\**" />
+    <Content Include="Client\package.json" />
 
     <!-- However make the Umbraco-package.json included for dotnet pack or nuget package and visible to the solution -->
     <None Include="Client\public\umbraco-package.json" Pack="false" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="..\..\docs\README_nuget.md">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
+    <None Include="..\..\docs\README_nuget.md" Pack="true" PackagePath="\" />
+    <None Include="..\..\docs\icon.png" Pack="true" PackagePath="\" />
   </ItemGroup>
 
 </Project>

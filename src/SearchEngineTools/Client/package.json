@@ -1,10 +1,10 @@
 {
   "name": "search-engine-tools",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.1-beta",
   "type": "module",
   "scripts": {
-    "watch": "tsc && vite build --watch",
+    "watch": "tsc && vite build --watch --mode development",
     "build": "tsc && vite build",
     "generate-client": "node scripts/generate-openapi.js https://localhost:44341/umbraco/swagger/searchenginetools/swagger.json"
   },
