@@ -278,7 +278,7 @@ export class SeoSettingsPropertyEditorUiElement extends UmbFormControlMixin<SeoS
     #form { width: 400px; }
     #form > div + div { margin-top: 10px; }
     #form uui-input, #form uui-textarea { width: 100%; }
-    #searchPreview { max-width: 600px; }
+    #searchPreview { width: 400px; }
 
     #searchPreview h6
     {
