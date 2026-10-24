@@ -68,7 +68,7 @@ const seoSettingsUi: UmbExtensionManifest =
   alias: 'GameInfoSites.SearchEngineTools.SeoSettingsUi',
   name: 'SEO Settings Property Editor UI',
   element: () => import('./seoSettingsPropertyEditorUi.element.ts'),
-  elementName: 'seo-settings-property-editor-ui',
+  elementName: 'gis-seo-settings-property-editor-ui',
   meta:
   {
     label: 'SEO Settings',

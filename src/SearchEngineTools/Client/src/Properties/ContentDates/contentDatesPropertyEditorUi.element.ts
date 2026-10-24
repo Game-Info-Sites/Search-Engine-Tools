@@ -8,7 +8,7 @@ import { UUICheckboxElement } from "@umbraco-cms/backoffice/external/uui";
 import { formatDateTime } from "../../Utilities/formatDateTime";
 
 @customElement('content-dates-property-editor-ui')
-export class ContentDatesPropertyEditorUiElement extends UmbFormControlMixin<ContentDatesPropertyEditorValue | undefined, typeof UmbLitElement>(UmbLitElement, undefined) implements UmbPropertyEditorUiElement
+export default class GisContentDatesPropertyEditorUiElement extends UmbFormControlMixin<ContentDatesPropertyEditorValue | undefined, typeof UmbLitElement>(UmbLitElement, undefined) implements UmbPropertyEditorUiElement
 {
   @state() _publishedOnLabel = '';
   @state() _lastSignificantUpdateLabel = '';
@@ -44,12 +44,10 @@ export class ContentDatesPropertyEditorUiElement extends UmbFormControlMixin<Con
   }
 }
 
-export default ContentDatesPropertyEditorUiElement;
-
 declare global
 {
   interface HTMLElementTagNameMap
   {
-    'content-dates-property-editor-ui': ContentDatesPropertyEditorUiElement;
+    'gis-content-dates-property-editor-ui': GisContentDatesPropertyEditorUiElement;
   }
 }
