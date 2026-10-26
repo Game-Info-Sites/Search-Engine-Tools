@@ -1,6 +1,7 @@
 <Solution>
   <Folder Name="/Solution Items/">
     <File Path="../.github/CONTRIBUTING.md" />
+    <File Path="../.github/FUNDING.yml" />
     <File Path="../.github/README.md" />
     <File Path="../.github/workflows/release.yml" />
     <File Path="../docs/README_nuget.md" />

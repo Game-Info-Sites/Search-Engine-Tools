@@ -92,3 +92,7 @@ Contributions to this package are most welcome! Please read the [Contributing Gu
 ## Acknowledgments
 
 The SEO Settings Property is highly inspired by the SEO Visualizer from Markus Johansson.
+
+## Support
+If you found this package helpful, consider supporting our team on <a href="https://ko-fi.com/gameinfosites">ko-fi</a>
+<br /><br />[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/gameinfosites)
