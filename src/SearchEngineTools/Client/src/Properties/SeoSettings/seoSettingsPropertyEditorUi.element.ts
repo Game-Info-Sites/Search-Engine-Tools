@@ -16,7 +16,7 @@ import { UmbTextStyles } from "@umbraco-cms/backoffice/style";
 import { SeoSettingsPropertyEditorValue } from "../../Models/seoSettingsPropertyEditorValue";
 
 @customElement('seo-settings-property-editor-ui')
-export class SeoSettingsPropertyEditorUiElement extends UmbFormControlMixin<SeoSettingsPropertyEditorValue | undefined, typeof UmbLitElement>(UmbLitElement, undefined) implements UmbPropertyEditorUiElement
+export default class GisSeoSettingsPropertyEditorUiElement extends UmbFormControlMixin<SeoSettingsPropertyEditorValue | undefined, typeof UmbLitElement>(UmbLitElement, undefined) implements UmbPropertyEditorUiElement
 {
   #documentUrlRepository = new UmbDocumentUrlRepository(this);
   #workspaceContext?: UmbDocumentWorkspaceContext;
@@ -309,12 +309,10 @@ export class SeoSettingsPropertyEditorUiElement extends UmbFormControlMixin<SeoS
   `]
 }
 
-export default SeoSettingsPropertyEditorUiElement;
-
 declare global
 {
   interface HTMLElementTagNameMap
   {
-    'seo-settings-property-editor-ui': SeoSettingsPropertyEditorUiElement;
+    'gis-seo-settings-property-editor-ui': GisSeoSettingsPropertyEditorUiElement;
   }
 }

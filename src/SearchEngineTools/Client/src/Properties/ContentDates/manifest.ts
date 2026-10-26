@@ -12,7 +12,7 @@ const contentDatesUi: UmbExtensionManifest =
   name: 'Content Dates Property Editor UI',
   alias: 'GameInfoSites.SearchEngineTools.ContentDatesUi',
   element: () => import('./contentDatesPropertyEditorUi.element.ts'),
-  elementName: 'content-dates-property-editor-ui',
+  elementName: 'gis-content-dates-property-editor-ui',
   meta:
   {
     label: 'Content Dates',

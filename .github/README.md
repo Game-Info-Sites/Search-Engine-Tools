@@ -2,7 +2,7 @@
 
 [![Downloads](https://img.shields.io/nuget/dt/Umbraco.Community.SearchEngineTools?color=cc9900)](https://www.nuget.org/packages/Umbraco.Community.SearchEngineTools/)
 [![NuGet](https://img.shields.io/nuget/vpre/Umbraco.Community.SearchEngineTools?color=0273B3)](https://www.nuget.org/packages/Umbraco.Community.SearchEngineTools)
-[![GitHub license](https://img.shields.io/github/license/GameInfoSites/Search-Engine-Tools?color=8AB803)](../LICENSE)
+[![GitHub license](https://img.shields.io/github/license/Game-Info-Sites/Search-Engine-Tools?color=8AB803)](../LICENSE)
 
 Search Engine Tools is a collection of properties and tools to enhance Search Engine Optimization and general Search Engine tasks.
 Developers are able to pick and choose which tools and propertyes they want to use.
@@ -19,20 +19,71 @@ And don't forget to add the screenshot files to umbraco-marketplace.json too!
 
 ## Installation
 
-Add the package to an existing Umbraco website (v17+) from nuget:
+Add the package to an existing Umbraco website (v17+) from NuGet:
 
-`dotnet add package Umbraco.Community.SearchEngineTools`
+```dotnet add package Umbraco.Community.SearchEngineTools```
+
+Add the following JSON to the root of your appsettings file.
+
+```json
+ "SearchEngineTools": {
+    "Enabled": true,
+    "IndexNow": {
+      "Enabled": true
+    }
+  }
+```
 
 ## Features
 
-<b>SEO Settings Property</b>
-This is an all-in-one property for configuring common SEO settings. It includes a text field for the meta description and title, along with a preview of what the search result should generally look like. In the property configuration, you can set a character limit for the meta description and title that triggers a warning should the editor exceed this limit. You can also set a global suffix to be added to the title. 
-An option to set a NoIndex flag, indicating that the page should not be indexed by search engines, can be enabled. There is also a NoFollow global flag that can be enabled for the page.
+<b>SEO Settings Property:</b>
+<br />An all-in-one property for common page level SEO settings. It includes title and meta description fields, a preview of roughly how the page will appear in search results, as well as optional NoIndex and NoFollow toggles.
+A developer can configure the following settings for the data type:
 
-<b>Content Dates</b>
-The Content Dates property adds “Published On” and “Last Significant Update” date properties that are automatically updated. If the property is added to a new page, then the initial values of both dates will be set to the date and time the page is published. If the property is added to an existing page then, on the next publish, the “Published On” and “Last Significant Update” dates will be set to Umbraco’s internal creation date for the page. 
-A checkbox is also available to indicate when the update being performed is considered “significant” so when this box is checked, the “Last Significant Update” value will be updated once the page is published.
+<ul>
+	<li>Set character limits for the title and meta description fields. Content editors see a warning when they exceed the limit but can still publish.</li>
+	<li>Create a suffix that's automatically appended to the title field, and choose whether it counts toward the title limit.</li>
+	<li>Enable the NoIndex and NoFollow toggles so content editors can set them per page.</li>
+</ul>
 
+To display the SEO Property (change `seoSettings` to your propertie's alias):
+```razor
+@{ var seoData = Model.Value<SeoSettingsValue>("seoSettings"); }
+<title>@seoData?.Title</title>
+<meta name="description" content="@seoData?.MetaDescription" />
+@if(seoData.NoFollowOption) {<meta name="robots" content="nofollow" />}
+@if(seoData.NoIndexOption) {<meta name="robots" content="noindex" />}
+```
+
+**Content Dates:**
+<br />A data type that adds two read-only date properties “Published On” and “Last Significant Update” that are automatically updated.
+
+<ul>
+	<li>New content: Both dates are set when the page is first published.</li>
+	<li>Existing content: When added to a document type that already has published pages, both dates are set to Umbraco’s internal creation date when each page is next published.</li>
+</ul>
+
+A checkbox is also added that allows content editors to update the “Last Significant Update” value the next time the page is published. The checkbox will reset after publishing but will persist when the page is saved without publishing.
+
+To display the content dates (change `contentDates` to yoru propertie's alias):
+```razor
+@{ var publishDates = Model.Value<ContentDatesValue>("contentDates"); }
+<p>Published On: @publishDates.PublishedOn.ToString("MMMM d, yyyy")</p>
+<p>Last Updated: @publishedDates.LastSignificantUpdate.ToString("MMM d, yyyy")</p>
+```
+
+
+**IndexNow:**
+<br />The IndexNow function submits content nodes that are published, unpublished, moved, or deleted to IndexNow for distribution to any search engines that support it. The plugin automatically generates and serves the verification key. The IndexNow function is disabled by default, to turn it on you must enable it in your appsettings.json file.
+
+```json
+ "SearchEngineTools": {
+    "Enabled": true,
+    "IndexNow": {
+      "Enabled": true
+    }
+  }
+```
 
 ## Contributing
 
@@ -41,3 +92,7 @@ Contributions to this package are most welcome! Please read the [Contributing Gu
 ## Acknowledgments
 
 The SEO Settings Property is highly inspired by the SEO Visualizer from Markus Johansson.
+
+## Support
+If you found this package helpful, consider supporting our team on <a href="https://ko-fi.com/gameinfosites">ko-fi</a>
+<br /><br />[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/gameinfosites)
