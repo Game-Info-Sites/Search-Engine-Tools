@@ -163,7 +163,7 @@ export default class GisSeoSettingsPropertyEditorUiElement extends UmbFormContro
 
   #prependProtocolAndHost(url: string): string
   {
-    if (SeoSettingsPropertyEditorUiElement.protocolRegex.test(url)) { return url; }
+    if (GisSeoSettingsPropertyEditorUiElement.protocolRegex.test(url)) { return url; }
     return `${window.location.protocol}//${window.location.host}${url}`;
   }
 
