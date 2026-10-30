@@ -19,6 +19,7 @@ using Umbraco.Cms.Core.Notifications;
 using Umbraco.Cms.Core.Scoping;
 using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Infrastructure.Migrations.Upgrade;
+using Umbraco.Extensions;
 
 namespace SearchEngineTools.Composers
 {
@@ -52,24 +53,28 @@ namespace SearchEngineTools.Composers
                 builder.Config.GetSection(ThrottlingOptions.SectionName));
 
             builder.Services.AddDbContext<SearchEngineToolsDbContext>((serviceProvider, options) =>
-            {
-                var connectionString =
-                    builder.Config.GetConnectionString("umbracoDbDSN");
+                options.UseUmbracoDatabaseProvider(serviceProvider));
 
-                if (string.IsNullOrWhiteSpace(connectionString))
-                {
-                    throw new InvalidOperationException("Connection string 'umbracoDbDSN' is not configured.");
-                }
+            //Taysirr's original DbConnection code that looks to only work on SqlLite.
+            //builder.Services.AddDbContext<SearchEngineToolsDbContext>((serviceProvider, options) =>
+            //{
+            //    var connectionString =
+            //        builder.Config.GetConnectionString("umbracoDbDSN");
 
-                var webHostEnvironment = serviceProvider.GetRequiredService<IWebHostEnvironment>();
-                var dataDirectory = Path.Combine(webHostEnvironment.ContentRootPath, "umbraco", "Data");
+            //    if (string.IsNullOrWhiteSpace(connectionString))
+            //    {
+            //        throw new InvalidOperationException("Connection string 'umbracoDbDSN' is not configured.");
+            //    }
 
-                Directory.CreateDirectory(dataDirectory);
+            //    var webHostEnvironment = serviceProvider.GetRequiredService<IWebHostEnvironment>();
+            //    var dataDirectory = Path.Combine(webHostEnvironment.ContentRootPath, "umbraco", "Data");
 
-                connectionString = connectionString.Replace("|DataDirectory|", dataDirectory);
+            //    Directory.CreateDirectory(dataDirectory);
 
-                options.UseSqlite(connectionString);
-            });
+            //    connectionString = connectionString.Replace("|DataDirectory|", dataDirectory);
+
+            //    options.UseSqlite(connectionString);
+            //});
 
             builder.Services.AddScoped<ISearchEngineSubmissionQueueRepository, SearchEngineSubmissionQueueRepository>();
             builder.Services.AddSingleton<IContentUrlChangeTracker, ContentUrlChangeTracker>();
