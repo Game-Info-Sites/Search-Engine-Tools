@@ -29,16 +29,13 @@
     <NuGetAudit>False</NuGetAudit>
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" />
-    <PackageReference Include="Umbraco.Cms.Web.Website" />
-    <PackageReference Include="Umbraco.Cms.Web.Common" />
-    <PackageReference Include="Umbraco.Cms.Api.Common" />
-    <PackageReference Include="Umbraco.Cms.Api.Management" />
-  </ItemGroup>
+<ItemGroup>
+  <PackageReference Include="Umbraco.Cms.Persistence.EFCore" />
+  <PackageReference Include="Umbraco.Cms.Web.Website" />
+  <PackageReference Include="Umbraco.Cms.Web.Common" />
+  <PackageReference Include="Umbraco.Cms.Api.Common" />
+  <PackageReference Include="Umbraco.Cms.Api.Management" />
+</ItemGroup>
 
   <ItemGroup>
     <!-- Dont include the client folder as part of packaging nuget build -->
