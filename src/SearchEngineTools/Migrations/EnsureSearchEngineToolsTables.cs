@@ -22,8 +22,8 @@ namespace SearchEngineTools.Migrations
             }
 
             Create.Table("SearchEngineSubmissionQueue")
-                .WithColumn("Id").AsInt32().NotNullable().PrimaryKey().Identity()
-                .WithColumn("Url").AsString(SearchEngineSubmissionItem.MaxUrlLength).NotNullable().Unique()
+                .WithColumn("Id").AsInt32().NotNullable().PrimaryKey("PK_SearchEngineSubmissionQueue").Identity()
+                .WithColumn("Url").AsString(SearchEngineSubmissionItem.MaxUrlLength).NotNullable().Unique("IX_SearchEngineSubmissionQueue_Url")
                 .WithColumn("Status").AsInt32().NotNullable().WithDefaultValue(0)
                 .WithColumn("LastModifiedUtc").AsDateTime().NotNullable()
                 .WithColumn("LastSubmittedUtc").AsDateTime().Nullable()
@@ -41,8 +41,8 @@ namespace SearchEngineTools.Migrations
             }
 
             Create.Table("IndexNowKeys")
-                .WithColumn("Id").AsInt32().NotNullable().PrimaryKey().Identity()
-                .WithColumn("Domain").AsString(IndexNowKey.MaxDomainLength).NotNullable().Unique()
+                .WithColumn("Id").AsInt32().NotNullable().PrimaryKey("PK_IndexNowKeys").Identity()
+                .WithColumn("Domain").AsString(IndexNowKey.MaxDomainLength).NotNullable().Unique("IX_IndexNowKeys_Domain")
                 .WithColumn("Key").AsString(IndexNowKey.MaxKeyLength).NotNullable()
                 .WithColumn("CreatedUtc").AsDateTime().NotNullable()
                 .Do();
