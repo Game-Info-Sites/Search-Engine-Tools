@@ -1,7 +1,7 @@
 {
   "id": "SearchEngineTools",
   "name": "Search Engine Tools",
-  "version": "1.0.3-beta",
+  "version": "1.0.5-beta",
   "allowTelemetry": true,
   "extensions": [
     {
